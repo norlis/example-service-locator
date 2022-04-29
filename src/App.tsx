@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
+import {Routes, Route, Navigate} from "react-router-dom";
 import './App.css';
+import LoginPage from "./presentation/containers/login";
+import Layout from "./presentation/components/layout";
+import HomePage from "./presentation/containers/home";
+import RequireAuth from "./presentation/components/requiere-auth";
+import AuthProvider from "./presentation/providers/auth-provider";
+import RequestInterceptor from "./presentation/containers/request-interceptor";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <AuthProvider>
+            <div className="App">
+                <RequestInterceptor>
+                    <Routes>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route element={<Layout/>}>
+                            <Route path="/" element={
+                                <RequireAuth>
+                                    <HomePage/>
+                                </RequireAuth>
+                            }
+                            />
+                        </Route>
+                        <Route path="*" element={<Navigate replace to="/" />} />
+                    </Routes>
+                </RequestInterceptor>
+            </div>
+        </AuthProvider>
+    );
 }
 
 export default App;
